@@ -1,4 +1,3 @@
-# HomeAssistant component: `attributes`
 The `attributes` platform supports sensors which break out specified `attribute` from other entities.
 
 To enable Attribute sensor in your installation, add the following to your `configuration.yaml` file:
