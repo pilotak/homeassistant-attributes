@@ -38,7 +38,7 @@ Configuration variables:
 You can find this integration in a store.
 
 ## Install manually
-You need to clone this repo to the root folder of your configuration, file tree should look like this:
+You need to copy `attributes` folder from this repo to the `custom_components` folder in the root of your configuration, file tree should look like this:
 ```
 └── ...
 └── configuration.yaml
@@ -49,7 +49,7 @@ You need to clone this repo to the root folder of your configuration, file tree 
         └── sensor.py
 ```
 
->**Note**: if the custom_components directory does not exist, you need to create it.
+>__Note__: if the `custom_components` directory does not exist, you need to create it.
 
 ## Examples
 This example shows how to extact `battery_level` attribute.
