@@ -1,7 +1,7 @@
 {
   "domain": "attributes",
   "name": "Attributes",
-  "documentation": "https://github.com/pilotak/homeassistant-attributes/blob/master/info.md",
+  "documentation": "https://github.com/pilotak/homeassistant-attributes",
   "requirements": [],
   "dependencies": [],
   "codeowners": [

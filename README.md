@@ -34,6 +34,24 @@ Configuration variables:
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
 - **time_format** (*Optional*): **`strftime`** type string to beautify time attribute output. Applicable only when attribute `last_changed` or `last_triggered` is selected. Cheatsheet for strftime formatting  [here](http://strftime.ninja/).
 
+## Install via [HACS](https://github.com/custom-components/hacs)
+You can find this integration in a store.
+
+## Install manually
+You need to clone this repo to the root folder of your configuration, file tree should look like this:
+```
+└── ...
+└── configuration.yaml
+└── custom_components
+    └── attributes
+        └── __init__.py
+        └── manifest.json
+        └── sensor.py
+```
+
+>**Note**: if the custom_components directory does not exist, you need to create it.
+
+## Examples
 This example shows how to extact `battery_level` attribute.
 
 ```yaml
