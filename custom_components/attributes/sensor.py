@@ -77,9 +77,6 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         if device_state is not None:
             device_friendly_name = device_state.attributes.get('friendly_name')
         else:
-            device_friendly_name = None
-
-        if device_friendly_name is None:
             device_friendly_name = device.split(".", 1)[1]
 
         friendly_name = config.get(ATTR_FRIENDLY_NAME, device_friendly_name)
@@ -222,9 +219,6 @@ class AttributeSensor(RestoreEntity):
         if entity_state is not None:
             device_friendly_name = entity_state.attributes.get('friendly_name')
         else:
-            device_friendly_name = None
-
-        if device_friendly_name is not None:
             self._name = device_friendly_name
 
         try:
