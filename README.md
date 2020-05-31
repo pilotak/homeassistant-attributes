@@ -66,7 +66,7 @@ sensor:
       - sensor.test3
 ```
 
->If an attribute is __`battery`__ or __`battety_level`__ and you don't specify __`icon`__, the following icon_template is applied (fullness). The result is that the battery icon becomes as full as the battery based on percentage.
+>If an attribute is __`battery`__ or __`battery_level`__ and you don't specify __`icon`__, the following icon_template is applied (fullness). The result is that the battery icon becomes as full as the battery based on percentage.
 
 ```yaml
 {% if batt == 'unknown' %}
