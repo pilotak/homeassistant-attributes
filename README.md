@@ -29,7 +29,7 @@ Configuration variables:
 
 - **entities** (*Required*): A list of entity IDs that you want to read attributes from.
 - **attribute** (*Required*): Which attribute to extract from defined entity IDs.
-- **frindly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified at the moment)*.
+- **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified at the moment)*.
 - **icon** (*Optional*): Icon to use in the Frontend.
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
 - **time_format** (*Optional*): **`strftime`** type string to beautify time attribute output. Applicable only when attribute `last_changed` or `last_triggered` is selected. Cheatsheet for strftime formatting  [here](http://strftime.ninja/).
