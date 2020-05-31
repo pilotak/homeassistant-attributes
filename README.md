@@ -1,7 +1,7 @@
 # HomeAssistant component: `attributes`
-The `attributes` platform supports sensors which break out specified `attribute` from other entities.
+The `attributes` platform supports sensors which break out a specified `attribute` from other entities.
 
-To enable Attribute sensor in your installation, add the following to your `configuration.yaml` file:
+To enable the `attributes` sensor in your installation, add the following to your `configuration.yaml` file:
 
 ```yaml
 # Example configuration.yaml entry
@@ -35,10 +35,10 @@ Configuration variables:
 - **time_format** (*Optional*): **`strftime`** type string to beautify time attribute output. Applicable only when attribute `last_changed` or `last_triggered` is selected. Cheatsheet for strftime formatting  [here](http://strftime.ninja/).
 
 ## Install via [HACS](https://github.com/custom-components/hacs)
-You can find this integration in a store.
+You can find this integration in the community store.
 
 ## Install manually
-You need to copy `attributes` folder from this repo to the `custom_components` folder in the root of your configuration, file tree should look like this:
+You need to copy the `attributes` folder from this repo to the `custom_components` folder in the root of your configuration. The file tree should look like this:
 ```
 └── ...
 └── configuration.yaml
@@ -52,7 +52,7 @@ You need to copy `attributes` folder from this repo to the `custom_components` f
 >__Note__: if the `custom_components` directory does not exist, you need to create it.
 
 ## Examples
-This example shows how to extact `battery_level` attribute.
+This example shows how to extract the `battery_level` attribute.
 
 ```yaml
 sensor:
@@ -66,7 +66,7 @@ sensor:
       - sensor.test3
 ```
 
->If an attribute is __`battery`__ or __`battety_level`__ and you don't specify __`icon`__ following icon_template is applied (fullness). The result is that battery icon become as full as battery based on percentage.
+>If an attribute is __`battery`__ or __`battety_level`__ and you don't specify __`icon`__, the following icon_template is applied (fullness). The result is that the battery icon becomes as full as the battery based on percentage.
 
 ```yaml
 {% if batt == 'unknown' %}
@@ -98,8 +98,7 @@ sensor:
 {% endif %}
 ```
 
-
-This example shows how to extact `last_triggered` attribute in human readable format.
+This example shows how to extract the `last_triggered` attribute in human-readable format.
 
 ```yaml
 sensor:
@@ -111,5 +110,4 @@ sensor:
     entities:
       - automation.dummy_changed
 ```
->If you select attribute __`last_changed`__ or __`last_triggered`__ and you specify time_format your datetime will get translated to your local timezone and will be formatted like `strftime()` ie.: ***2017-08-08T13:14:21.651894+00:00*** gets translated into specified strftime format with timezone applied. Result would be ie.: ***8 August 15:14:21*** if you timezone is UTC+2
-
+>If you select attribute __`last_changed`__ or __`last_triggered`__ and you specify time_format, your datetime will get translated to your local timezone and will be formatted like `strftime()` e.g., ***2017-08-08T13:14:21.651894+00:00*** gets translated into the specified strftime format with timezone applied. The result would be: ***8 August 15:14:21*** if your timezone is UTC+2
