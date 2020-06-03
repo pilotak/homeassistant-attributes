@@ -24,12 +24,14 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_ATTRIBUTE = "attribute"
 CONF_TIME_FORMAT = "time_format"
+CONF_ROUND_TO = "round_to"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(ATTR_ICON): cv.string,
     vol.Optional(ATTR_FRIENDLY_NAME): cv.string,
     vol.Optional(ATTR_UNIT_OF_MEASUREMENT): cv.string,
     vol.Optional(CONF_TIME_FORMAT): cv.string,
+    vol.Optional(CONF_ROUND_TO): cv.positive_int,
     vol.Required(CONF_ATTRIBUTE): cv.string,
     vol.Required(CONF_ENTITIES): cv.entity_ids
 })
@@ -44,6 +46,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     for device in config[CONF_ENTITIES]:
         attr = config.get(CONF_ATTRIBUTE)
         time_format = str(config.get(CONF_TIME_FORMAT))
+        round_to = config.get(CONF_ROUND_TO, None)
 
         if (attr == "last_triggered" or
                 attr == "last_changed") and time_format:
@@ -60,10 +63,18 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
                               {{% else %}} {2} {{% endif %}}").format(
                 device, attr, STATE_UNKNOWN)
         else:
-            state_template = ("{{% if states('{0}') != '{2}' %}}\
-                              {{{{ states.{0}.attributes['{1}'] }}}}\
-                              {{% else %}} {2} {{% endif %}}").format(
-                device, attr, STATE_UNKNOWN)
+            state_template = "{{% if states('{0}') != '{2}' %}}"
+
+            if round_to is None:
+                state_template += "{{{{ states.{0}.attributes['{1}'] }}}}"
+            elif round_to > 0:
+                state_template += "{{{{ (states.{0}.attributes['{1}'] | float) | round({3}) }}}}"
+            else:
+                state_template += "{{{{ states.{0}.attributes['{1}'] | int }}}}"
+
+            state_template += "{{% else %}} {2} {{% endif %}}"
+            state_template = state_template.format(
+                device, attr, STATE_UNKNOWN, round_to)
 
         _LOGGER.info("Adding attribute: %s of entity: %s", attr, device)
         _LOGGER.debug("Applying template: %s", state_template)

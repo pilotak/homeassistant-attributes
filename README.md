@@ -32,6 +32,7 @@ Configuration variables:
 - **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified at the moment)*.
 - **icon** (*Optional*): Icon to use in the Frontend.
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
+- **round_to** (*Optional*): round numbers to 'x' decimals, if zero it will become whole number. Skip this field if you extracting a string or you want to leave the value as it is.
 - **time_format** (*Optional*): **`strftime`** type string to beautify time attribute output. Applicable only when attribute `last_changed` or `last_triggered` is selected. Cheatsheet for strftime formatting  [here](http://strftime.ninja/).
 
 ## Install via [HACS](https://github.com/custom-components/hacs)
