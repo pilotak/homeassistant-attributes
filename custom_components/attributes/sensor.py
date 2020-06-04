@@ -57,11 +57,6 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
                               | timestamp_custom('{2}') }}}}\
                               {{% else %}} {3} {{% endif %}}").format(
                 device, attr, time_format, STATE_UNKNOWN)
-        elif attr == "battery" or attr == "battery_level":
-            state_template = ("{{% if states('{0}') != '{2}' %}}\
-                              {{{{ states.{0}.attributes['{1}'] | float }}}}\
-                              {{% else %}} {2} {{% endif %}}").format(
-                device, attr, STATE_UNKNOWN)
         else:
             state_template = "{{% if states('{0}') != '{2}' %}}"
 
