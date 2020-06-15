@@ -29,10 +29,11 @@ Configuration variables:
 
 - **entities** (*Required*): A list of entity IDs that you want to read attributes from.
 - **attribute** (*Required*): Which attribute to extract from defined entity IDs.
-- **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified at the moment)*.
+- **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified)*.
 - **icon** (*Optional*): Icon to use in the Frontend.
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
-- **round_to** (*Optional*): round numbers to 'x' decimals, if zero it will become whole number. Skip this field if you extracting a string or you want to leave the value as it is.
+- **round_to** (*Optional*): Round numbers to 'x' decimals, if zero it will become whole number. Skip this field if you extracting a string or you want to leave the value as it is.
+- **value_template** (*Optional*): In case you need to do a math with the value ie. offset, bit gain, etc. *(will be the same for all entities specified)*.
 - **time_format** (*Optional*): **`strftime`** type string to beautify time attribute output. Applicable only when attribute `last_changed` or `last_triggered` is selected. Cheatsheet for strftime formatting  [here](http://strftime.ninja/).
 
 This example shows how to extract the `battery_level` attribute.
