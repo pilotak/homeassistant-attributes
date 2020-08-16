@@ -2,6 +2,8 @@ name: Validate with HACS
 
 on:
   push:
+    paths-ignore:
+      - "README.md"
   schedule:
     - cron: "30 7 1 * *"
 

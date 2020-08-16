@@ -1,4 +1,6 @@
 # HomeAssistant component: `attributes`
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+
 The `attributes` platform supports sensors which break out a specified `attribute` from other entities.
 
 To enable the `attributes` sensor in your installation, add the following to your `configuration.yaml` file:
