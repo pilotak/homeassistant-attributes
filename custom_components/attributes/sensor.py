@@ -227,8 +227,8 @@ class AttributeSensor(RestoreEntity):
         entity_state = self.hass.states.get(self._entity)
         if entity_state is not None:
             device_friendly_name = entity_state.attributes.get('friendly_name')
-        else:
-            self._name = device_friendly_name
+            if device_friendly_name is not None:
+                self._name = device_friendly_name
 
         try:
             self._state = self._template.async_render()
