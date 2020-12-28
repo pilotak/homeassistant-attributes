@@ -1,4 +1,5 @@
 # HomeAssistant component: `attributes`
+[![Validate](https://github.com/pilotak/homeassistant-attributes/workflows/Validate/badge.svg)](https://github.com/pilotak/homeassistant-attributes/actions)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 The `attributes` platform supports sensors which break out a specified `attribute` from other entities.
