@@ -1,19 +1,27 @@
-name: Validate with HACS
+name: Validate
 
 on:
   push:
     paths-ignore:
-      - "README.md"
-  schedule:
-    - cron: "30 7 1 * *"
+      - 'README.md'
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   validate:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v2"
+      - name: Checkout
+        uses: "actions/checkout@v2"
+
       - name: HACS validation
         uses: "hacs/integration/action@master"
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CATEGORY: "integration"
+      
+      - name: HASSFEST
+        uses: home-assistant/actions/hassfest@master

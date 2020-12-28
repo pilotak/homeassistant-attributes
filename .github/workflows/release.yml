@@ -1,0 +1,37 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Prepare
+        id: prepare
+        run: |
+          git fetch --prune --unshallow --tags -f
+
+          VERSION=$(git tag --points-at HEAD)
+          VERSION=${VERSION//v}
+
+          echo "## :bookmark_tabs: Changes" >>"CHANGELOG.md"
+          git log --pretty=format:"- %s %H%n" $(git describe --abbrev=0 --tags $(git describe --tags --abbrev=0)^)...$(git describe --tags --abbrev=0) >>"CHANGELOG.md"
+
+          echo ::set-output name=version::${VERSION}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.prepare.outputs.version }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
