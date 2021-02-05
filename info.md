@@ -9,7 +9,7 @@ sensor:
   - platform: attributes
     friendly_name: "Batteries"
     attribute: battery_level
-    unit_of_measurement: "%"
+    device_class: battery
     entities:
       - sensor.myslipo_1_0
       - sensor.myslipo_2_0
@@ -31,6 +31,7 @@ Configuration variables:
 - **attribute** (*Required*): Which attribute to extract from defined entity IDs.
 - **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified)*.
 - **icon** (*Optional*): Icon to use in the Frontend.
+- **device_class** (*Optional*): Defines the device_class with appropriate icon and unit of measurement, if not specified it will be the same as parent.
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
 - **round_to** (*Optional*): Round numbers to 'x' decimals, if zero it will become whole number. Skip this field if you extracting a string or you want to leave the value as it is.
 - **value_template** (*Optional*): In case you need to do a math with the value ie. offset, bit gain, etc. *(will be the same for all entities specified)*.
@@ -50,7 +51,7 @@ sensor:
       - sensor.test3
 ```
 
->If an attribute is __`battery`__ or __`battery_level`__ and you don't specify __`icon`__, the following icon_template is applied (fullness). The result is that the battery icon becomes as full as the battery based on percentage.
+>If an attribute is __`battery`__ or __`battery_level`__ and you don't specify __`icon`__ or __`device_class`__ is not `battery`, the following icon_template is applied (fullness). The result is that the battery icon becomes as full as the battery based on percentage.
 
 ```yaml
 {% if batt == 'unknown' %}

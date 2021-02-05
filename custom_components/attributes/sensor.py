@@ -10,7 +10,7 @@ from homeassistant.core import callback
 from homeassistant.components.sensor import ENTITY_ID_FORMAT, PLATFORM_SCHEMA
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME, ATTR_UNIT_OF_MEASUREMENT, ATTR_ICON, CONF_ENTITIES,
-    EVENT_HOMEASSISTANT_START, STATE_UNKNOWN, CONF_VALUE_TEMPLATE)
+    ATTR_DEVICE_CLASS, EVENT_HOMEASSISTANT_START, STATE_UNKNOWN, CONF_VALUE_TEMPLATE)
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity, async_generate_entity_id
@@ -30,6 +30,7 @@ CONF_ROUND_TO = "round_to"
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(ATTR_ICON): cv.string,
     vol.Optional(ATTR_FRIENDLY_NAME): cv.string,
+    vol.Optional(ATTR_DEVICE_CLASS): cv.string,
     vol.Optional(ATTR_UNIT_OF_MEASUREMENT): cv.string,
     vol.Optional(CONF_TIME_FORMAT): cv.string,
     vol.Optional(CONF_ROUND_TO): cv.positive_int,
@@ -90,6 +91,8 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
             device_friendly_name = device.split(".", 1)[1]
 
         friendly_name = config.get(ATTR_FRIENDLY_NAME, device_friendly_name)
+        device_class = config.get(
+            ATTR_DEVICE_CLASS, device_state.attributes.get('device_class'))
         unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
 
         if icon.startswith('mdi:'):
@@ -99,7 +102,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
 
             new_icon = template_helper.Template(new_icon)
             new_icon.hass = hass
-        elif attr == "battery" or attr == "battery_level":
+        elif (device_class is None or device_class != "battery") and attr == "battery" or attr == "battery_level":
             _LOGGER.debug("Applying battery icon template")
 
             new_icon = ("{{% if states('{0}') != '{2}' %}}\
@@ -143,6 +146,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
                 hass,
                 ("{0}_{1}").format(device.split(".", 1)[1], attr),
                 friendly_name,
+                device_class,
                 unit_of_measurement,
                 state_template,
                 new_icon,
@@ -159,14 +163,15 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
 class AttributeSensor(RestoreEntity):
     """Representation of a Attribute Sensor."""
 
-    def __init__(self, hass, device_id, friendly_name, unit_of_measurement,
-                 state_template, icon_template, entity_id):
+    def __init__(self, hass, device_id, friendly_name, device_class,
+                 unit_of_measurement, state_template, icon_template, entity_id):
         """Initialize the sensor."""
         self.hass = hass
         self.entity_id = async_generate_entity_id(ENTITY_ID_FORMAT, device_id,
                                                   hass=hass)
         self._name = friendly_name
         self._unique_id = slugify(f"{entity_id}_{device_id}")
+        self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
         self._template = state_template
         self._state = None
@@ -216,6 +221,11 @@ class AttributeSensor(RestoreEntity):
     def icon(self):
         """Return the icon to use in the frontend, if any."""
         return self._icon
+
+    @property
+    def device_class(self):
+        """Return the device_class."""
+        return self._device_class
 
     @property
     def unit_of_measurement(self):
