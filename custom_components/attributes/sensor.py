@@ -10,7 +10,8 @@ from homeassistant.core import callback
 from homeassistant.components.sensor import ENTITY_ID_FORMAT, PLATFORM_SCHEMA
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME, ATTR_UNIT_OF_MEASUREMENT, ATTR_ICON, CONF_ENTITIES,
-    ATTR_DEVICE_CLASS, EVENT_HOMEASSISTANT_START, STATE_UNKNOWN, CONF_VALUE_TEMPLATE)
+    ATTR_DEVICE_CLASS, EVENT_HOMEASSISTANT_START, STATE_UNKNOWN, STATE_UNAVAILABLE,
+    CONF_VALUE_TEMPLATE)
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity, async_generate_entity_id
@@ -53,28 +54,28 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         if (attr == "last_triggered" or
                 attr == "last_changed") and time_format:
 
-            state_template = ("{{% if states('{0}') != '{2}' %}}\
-                              {{{{ as_timestamp(states.{0}.attributes['{1}'])\
+            state_template = ("{{% if states('{0}') != '{2}' and states('{0}') != '{4}' %}}\
+                              {{{{ as_timestamp(state_attr('{0}', '{1}'))\
                               | int | timestamp_local()\
                               | timestamp_custom('{2}') }}}}\
                               {{% else %}} {3} {{% endif %}}").format(
-                device, attr, time_format, STATE_UNKNOWN)
+                device, attr, time_format, STATE_UNKNOWN, STATE_UNAVAILABLE)
         else:
             round_to = config.get(CONF_ROUND_TO, None)
             additional_template = config.get(CONF_VALUE_TEMPLATE, "")
 
-            state_template = "{{% if states('{0}') != '{2}' %}}"
+            state_template = "{{% if states('{0}') != '{2}' and states('{0}') != '{5}' %}}"
 
             if round_to is None:
-                state_template += "{{{{ states.{0}.attributes['{1}'] {4} }}}}"
+                state_template += "{{{{ state_attr('{0}', '{1}') {4} }}}}"
             elif round_to > 0:
-                state_template += "{{{{ (states.{0}.attributes['{1}'] | float) | round({3}) {4} }}}}"
+                state_template += "{{{{ (state_attr('{0}', '{1}') | float) | round({3}) {4} }}}}"
             else:
-                state_template += "{{{{ states.{0}.attributes['{1}'] | int {4} }}}}"
+                state_template += "{{{{ state_attr('{0}', '{1}') | int {4} }}}}"
 
             state_template += "{{% else %}} {2} {{% endif %}}"
             state_template = state_template.format(
-                device, attr, STATE_UNKNOWN, round_to, additional_template)
+                device, attr, STATE_UNKNOWN, round_to, additional_template, STATE_UNAVAILABLE)
 
         _LOGGER.info("Adding attribute: %s of entity: %s", attr, device)
         _LOGGER.debug("Applying template: %s", state_template)
@@ -91,21 +92,26 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
             device_friendly_name = device.split(".", 1)[1]
 
         friendly_name = config.get(ATTR_FRIENDLY_NAME, device_friendly_name)
-        device_class = config.get(
-            ATTR_DEVICE_CLASS, device_state.attributes.get('device_class'))
+
+        if device_state is not None:
+            device_class = config.get(
+                ATTR_DEVICE_CLASS, device_state.attributes.get('device_class'))
+        else:
+            device_class = config.get(ATTR_DEVICE_CLASS, None)
+
         unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
 
         if icon.startswith('mdi:'):
             _LOGGER.debug("Applying user defined icon: '%s'", icon)
-            new_icon = ("{{% if states('{0}') != '{2}' %}} {1} {{% else %}}\
-                mdi:eye {{% endif %}}").format(device, icon, STATE_UNKNOWN)
+            new_icon = ("{{% if states('{0}') != '{2}' and states('{0}') != '{3}' %}} {1} {{% else %}}\
+                mdi:eye {{% endif %}}").format(device, icon, STATE_UNKNOWN, STATE_UNAVAILABLE)
 
             new_icon = template_helper.Template(new_icon)
             new_icon.hass = hass
         elif (device_class is None or device_class != "battery") and attr == "battery" or attr == "battery_level":
             _LOGGER.debug("Applying battery icon template")
 
-            new_icon = ("{{% if states('{0}') != '{2}' %}}\
+            new_icon = ("{{% if states('{0}') != '{2}' and states('{0}') != '{3}' %}}\
                 {{% set batt = states.{0}.attributes['{1}']|int %}}\
                 {{% if batt == 'unknown' %}}\
                 mdi:battery-unknown\
@@ -134,7 +140,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
                 {{% endif %}}\
             {{% else %}}\
             mdi:battery-unknown\
-            {{% endif %}}").format(device, attr, STATE_UNKNOWN)
+            {{% endif %}}").format(device, attr, STATE_UNKNOWN, STATE_UNAVAILABLE)
             new_icon = template_helper.Template(str(new_icon))
             new_icon.hass = hass
         else:
