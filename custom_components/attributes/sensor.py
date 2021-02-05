@@ -92,7 +92,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         else:
             device_friendly_name = device.split(".", 1)[1]
 
-        friendly_name = config.get(ATTR_FRIENDLY_NAME, device_friendly_name)
+        friendly_name = config.get(ATTR_FRIENDLY_NAME, None)
 
         if device_state is not None:
             device_class = config.get(
@@ -153,6 +153,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
                 hass,
                 ("{0}_{1}").format(device.split(".", 1)[1], attr),
                 friendly_name,
+                device_friendly_name,
                 device_class,
                 unit_of_measurement,
                 state_template,
@@ -170,13 +171,14 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
 class AttributeSensor(RestoreEntity):
     """Representation of a Attribute Sensor."""
 
-    def __init__(self, hass, device_id, friendly_name, device_class,
+    def __init__(self, hass, device_id, friendly_name, device_friendly_name, device_class,
                  unit_of_measurement, state_template, icon_template, entity_id):
         """Initialize the sensor."""
         self.hass = hass
         self.entity_id = async_generate_entity_id(ENTITY_ID_FORMAT, device_id,
                                                   hass=hass)
-        self._name = friendly_name
+        self._name = friendly_name if friendly_name != None else device_friendly_name
+        self._friendly_name = friendly_name
         self._unique_id = slugify(f"{entity_id}_{device_id}")
         self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
@@ -249,7 +251,7 @@ class AttributeSensor(RestoreEntity):
         """Update the state from the template and the friendly name."""
 
         entity_state = self.hass.states.get(self._entity)
-        if entity_state is not None:
+        if self._friendly_name == None and entity_state != None:
             device_friendly_name = entity_state.attributes.get('friendly_name')
             if device_friendly_name is not None:
                 self._name = device_friendly_name
