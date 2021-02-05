@@ -86,6 +86,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         icon = str(config.get(ATTR_ICON))
 
         device_state = hass.states.get(device)
+
         if device_state is not None:
             device_friendly_name = device_state.attributes.get('friendly_name')
         else:
@@ -101,7 +102,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
 
         unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
 
-        if icon.startswith('mdi:'):
+        if icon.startswith('mdi:') or icon.startswith('hass:'):
             _LOGGER.debug("Applying user defined icon: '%s'", icon)
             new_icon = ("{{% if states('{0}') != '{2}' and states('{0}') != '{3}' %}} {1} {{% else %}}\
                 mdi:eye {{% endif %}}").format(device, icon, STATE_UNKNOWN, STATE_UNAVAILABLE)
