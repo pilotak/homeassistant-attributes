@@ -20,7 +20,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 
 _LOGGER = logging.getLogger(__name__)
 
