@@ -3,12 +3,13 @@ name: Validate
 on:
   push:
     paths-ignore:
-      - 'README.md'
+      - "README.md"
+      - "info.md"
     branches:
       - master
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   validate:
@@ -17,11 +18,13 @@ jobs:
       - name: Checkout
         uses: "actions/checkout@v2"
 
+      - name: Check PEP8
+        uses: andymckay/pycodestyle-action@0.1.3
+
       - name: HACS validation
-        uses: hacs/integration/action@main
+        uses: hacs/action@main
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CATEGORY: "integration"
-      
+          CATEGORY: integration
+
       - name: HASSFEST
         uses: home-assistant/actions/hassfest@master
