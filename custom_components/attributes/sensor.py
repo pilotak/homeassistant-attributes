@@ -54,7 +54,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
         if (attr == "last_triggered" or
                 attr == "last_changed") and time_format:
 
-            state_template = ("{{% if states('{0}') != '{2}' "
+            state_template = ("{{% if states('{0}') != '{3}' "
                               "and states('{0}') != '{4}' %}}\
                               {{{{ as_timestamp(state_attr('{0}', '{1}'))\
                               | int | timestamp_local()\
