@@ -1,11 +1,11 @@
 {
   "domain": "attributes",
   "name": "Attributes",
-  "version": "1.2.1",
-  "documentation": "https://github.com/pilotak/homeassistant-attributes",
-  "issue_tracker": "https://github.com/pilotak/homeassistant-attributes/issues",
-  "iot_class": "assumed_state",
-  "requirements": [],
+  "codeowners": ["@pilotak"],
   "dependencies": [],
-  "codeowners": ["@pilotak"]
+  "documentation": "https://github.com/pilotak/homeassistant-attributes",
+  "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/pilotak/homeassistant-attributes/issues",
+  "requirements": [],
+  "version": "1.2.1"
 }
