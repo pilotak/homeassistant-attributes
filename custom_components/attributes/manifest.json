@@ -1,7 +1,7 @@
 {
   "domain": "attributes",
   "name": "Attributes",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "documentation": "https://github.com/pilotak/homeassistant-attributes",
   "issue_tracker": "https://github.com/pilotak/homeassistant-attributes/issues",
   "requirements": [],
