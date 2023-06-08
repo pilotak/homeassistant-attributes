@@ -1,5 +1,4 @@
 {
   "name": "Attributes extractor",
-  "homeassistant": "0.103.0",
-  "domains": ["sensor"]
+  "homeassistant": "2023.6.0"
 }
