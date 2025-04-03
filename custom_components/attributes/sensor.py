@@ -7,18 +7,21 @@ import logging
 import voluptuous as vol
 
 from homeassistant.core import callback
-from homeassistant.components.sensor import ENTITY_ID_FORMAT, PLATFORM_SCHEMA
+from homeassistant.components.sensor import (
+    ENTITY_ID_FORMAT, PLATFORM_SCHEMA, DEVICE_CLASSES_SCHEMA,
+    STATE_CLASSES_SCHEMA)
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME, ATTR_UNIT_OF_MEASUREMENT, ATTR_ICON, CONF_ENTITIES,
     ATTR_DEVICE_CLASS, EVENT_HOMEASSISTANT_START, STATE_UNKNOWN,
-    STATE_UNAVAILABLE, CONF_VALUE_TEMPLATE)
+    STATE_UNAVAILABLE, CONF_VALUE_TEMPLATE, CONF_STATE_CLASS)
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity import Entity, async_generate_entity_id
+from homeassistant.helpers.entity import async_generate_entity_id
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
+
 
 __version__ = '1.2.1'
 
@@ -31,11 +34,12 @@ CONF_ROUND_TO = "round_to"
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(ATTR_ICON): cv.string,
     vol.Optional(ATTR_FRIENDLY_NAME): cv.string,
-    vol.Optional(ATTR_DEVICE_CLASS): cv.string,
+    vol.Optional(ATTR_DEVICE_CLASS): DEVICE_CLASSES_SCHEMA,
     vol.Optional(ATTR_UNIT_OF_MEASUREMENT): cv.string,
     vol.Optional(CONF_TIME_FORMAT): cv.string,
     vol.Optional(CONF_ROUND_TO): cv.positive_int,
     vol.Optional(CONF_VALUE_TEMPLATE): cv.string,
+    vol.Optional(CONF_STATE_CLASS): STATE_CLASSES_SCHEMA,
     vol.Required(CONF_ATTRIBUTE): cv.string,
     vol.Required(CONF_ENTITIES): cv.entity_ids
 })
@@ -109,6 +113,8 @@ async def async_setup_platform(
         else:
             device_class = config.get(ATTR_DEVICE_CLASS, None)
 
+        state_class = config.get(ATTR_DEVICE_CLASS, None)
+
         unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
 
         if icon.startswith('mdi:') or icon.startswith('hass:'):
@@ -169,6 +175,7 @@ async def async_setup_platform(
                 friendly_name,
                 device_friendly_name,
                 device_class,
+                state_class,
                 unit_of_measurement,
                 state_template,
                 new_icon,
@@ -186,7 +193,7 @@ class AttributeSensor(RestoreEntity):
     """Representation of a Attribute Sensor."""
 
     def __init__(self, hass, device_id, friendly_name, device_friendly_name,
-                 device_class, unit_of_measurement, state_template,
+                 device_class, state_class, unit_of_measurement, state_template,
                  icon_template, entity_id):
         """Initialize the sensor."""
         self.hass = hass
@@ -197,6 +204,7 @@ class AttributeSensor(RestoreEntity):
         self._friendly_name = friendly_name
         self._unique_id = slugify(f"{entity_id}_{device_id}")
         self._device_class = device_class
+        self._state_class = state_class
         self._unit_of_measurement = unit_of_measurement
         self._template = state_template
         self._state = None
@@ -250,6 +258,11 @@ class AttributeSensor(RestoreEntity):
     def device_class(self):
         """Return the device_class."""
         return self._device_class
+
+    @property
+    def state_class(self):
+        """Return the state_class."""
+        return self._state_class
 
     @property
     def unit_of_measurement(self):
