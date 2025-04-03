@@ -232,7 +232,7 @@ class AttributeSensor(RestoreEntity):
         @callback
         def template_sensor_state_listener(entity, old_state, new_state):
             """Handle device state changes."""
-            self.hass.async_add_job(self.async_update_ha_state(True))
+            self.hass.async_create_task(self.async_update_ha_state(True))
 
         @callback
         def template_sensor_startup(event):
@@ -240,7 +240,7 @@ class AttributeSensor(RestoreEntity):
             async_track_state_change(
                 self.hass, self._entity, template_sensor_state_listener)
 
-            self.hass.async_add_job(self.async_update_ha_state(True))
+            self.hass.async_create_task(self.async_update_ha_state(True))
 
         self.hass.bus.async_listen_once(
             EVENT_HOMEASSISTANT_START, template_sensor_startup)
