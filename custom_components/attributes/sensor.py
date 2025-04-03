@@ -204,8 +204,8 @@ class AttributeSensor(RestoreEntity):
     """Representation of a Attribute Sensor."""
 
     def __init__(self, hass, device_id, friendly_name, device_friendly_name,
-                 device_class, state_class, unit_of_measurement, state_template,
-                 icon_template, entity_id):
+                 device_class, state_class, unit_of_measurement,
+                 state_template, icon_template, entity_id):
         """Initialize the sensor."""
         self.hass = hass
         self.entity_id = async_generate_entity_id(ENTITY_ID_FORMAT, device_id,
