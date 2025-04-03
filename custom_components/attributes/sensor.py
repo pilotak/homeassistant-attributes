@@ -28,7 +28,7 @@ from homeassistant.const import (
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import async_generate_entity_id
-from homeassistant.helpers.event import async_track_state_change
+from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
@@ -237,7 +237,7 @@ class AttributeSensor(RestoreEntity):
         @callback
         def template_sensor_startup(event):
             """Update on startup."""
-            async_track_state_change(
+            async_track_state_change_event(
                 self.hass, self._entity, template_sensor_state_listener)
 
             self.hass.async_create_task(self.async_update_ha_state(True))
