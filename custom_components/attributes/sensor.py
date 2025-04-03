@@ -16,10 +16,10 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME,
-    ATTR_UNIT_OF_MEASUREMENT,
+    CONF_UNIT_OF_MEASUREMENT,
     ATTR_ICON,
     CONF_ENTITIES,
-    ATTR_DEVICE_CLASS,
+    CONF_DEVICE_CLASS,
     EVENT_HOMEASSISTANT_START,
     STATE_UNKNOWN,
     STATE_UNAVAILABLE,
@@ -34,7 +34,7 @@ from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,8 +45,8 @@ CONF_ROUND_TO = "round_to"
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(ATTR_ICON): cv.string,
     vol.Optional(ATTR_FRIENDLY_NAME): cv.string,
-    vol.Optional(ATTR_DEVICE_CLASS): DEVICE_CLASSES_SCHEMA,
-    vol.Optional(ATTR_UNIT_OF_MEASUREMENT): cv.string,
+    vol.Optional(CONF_DEVICE_CLASS): DEVICE_CLASSES_SCHEMA,
+    vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
     vol.Optional(CONF_TIME_FORMAT): cv.string,
     vol.Optional(CONF_ROUND_TO): cv.positive_int,
     vol.Optional(CONF_VALUE_TEMPLATE): cv.string,
@@ -120,13 +120,13 @@ async def async_setup_platform(
 
         if device_state is not None:
             device_class = config.get(
-                ATTR_DEVICE_CLASS, device_state.attributes.get('device_class'))
+                CONF_DEVICE_CLASS, device_state.attributes.get('device_class'))
         else:
-            device_class = config.get(ATTR_DEVICE_CLASS, None)
+            device_class = config.get(CONF_DEVICE_CLASS, None)
 
         state_class = config.get(CONF_STATE_CLASS, None)
 
-        unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
+        unit_of_measurement = config.get(CONF_UNIT_OF_MEASUREMENT)
 
         if icon.startswith('mdi:') or icon.startswith('hass:'):
             _LOGGER.debug("Applying user defined icon: '%s'", icon)
