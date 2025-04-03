@@ -8,12 +8,23 @@ import voluptuous as vol
 
 from homeassistant.core import callback
 from homeassistant.components.sensor import (
-    ENTITY_ID_FORMAT, PLATFORM_SCHEMA, DEVICE_CLASSES_SCHEMA,
-    STATE_CLASSES_SCHEMA)
+    ENTITY_ID_FORMAT,
+    PLATFORM_SCHEMA,
+    DEVICE_CLASSES_SCHEMA,
+    STATE_CLASSES_SCHEMA,
+    CONF_STATE_CLASS,
+)
 from homeassistant.const import (
-    ATTR_FRIENDLY_NAME, ATTR_UNIT_OF_MEASUREMENT, ATTR_ICON, CONF_ENTITIES,
-    ATTR_DEVICE_CLASS, EVENT_HOMEASSISTANT_START, STATE_UNKNOWN,
-    STATE_UNAVAILABLE, CONF_VALUE_TEMPLATE, CONF_STATE_CLASS)
+    ATTR_FRIENDLY_NAME,
+    ATTR_UNIT_OF_MEASUREMENT,
+    ATTR_ICON,
+    CONF_ENTITIES,
+    ATTR_DEVICE_CLASS,
+    EVENT_HOMEASSISTANT_START,
+    STATE_UNKNOWN,
+    STATE_UNAVAILABLE,
+    CONF_VALUE_TEMPLATE,
+)
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import async_generate_entity_id
@@ -113,7 +124,7 @@ async def async_setup_platform(
         else:
             device_class = config.get(ATTR_DEVICE_CLASS, None)
 
-        state_class = config.get(ATTR_DEVICE_CLASS, None)
+        state_class = config.get(CONF_STATE_CLASS, None)
 
         unit_of_measurement = config.get(ATTR_UNIT_OF_MEASUREMENT)
 
@@ -203,8 +214,8 @@ class AttributeSensor(RestoreEntity):
             else device_friendly_name
         self._friendly_name = friendly_name
         self._unique_id = slugify(f"{entity_id}_{device_id}")
-        self._device_class = device_class
-        self._state_class = state_class
+        self._attr_device_class = device_class
+        self._attr_state_class = state_class
         self._unit_of_measurement = unit_of_measurement
         self._template = state_template
         self._state = None
@@ -253,16 +264,6 @@ class AttributeSensor(RestoreEntity):
     def icon(self):
         """Return the icon to use in the frontend, if any."""
         return self._icon
-
-    @property
-    def device_class(self):
-        """Return the device_class."""
-        return self._device_class
-
-    @property
-    def state_class(self):
-        """Return the state_class."""
-        return self._state_class
 
     @property
     def unit_of_measurement(self):
