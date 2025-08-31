@@ -58,7 +58,9 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass, config, async_add_entities, discovery_info=None
+):
     """Set up the attributes sensors."""
     _LOGGER.info("Starting attribute sensor")
     sensors = []
@@ -67,7 +69,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         attr = config.get(CONF_ATTRIBUTE)
         time_format = str(config.get(CONF_TIME_FORMAT))
 
-        if (attr == "last_triggered" or attr == "last_changed") and time_format:
+        if (
+            attr == "last_triggered" or attr == "last_changed"
+        ) and time_format:
 
             state_template = (
                 "{{% if states('{0}') != '{3}' "
@@ -76,23 +80,29 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                 "| int | timestamp_local()"
                 "| timestamp_custom('{2}') }}}}"
                 "{{% else %}} {3} {{% endif %}}"
-            ).format(device, attr, time_format, STATE_UNKNOWN, STATE_UNAVAILABLE)
+            ).format(
+                device, attr, time_format, STATE_UNKNOWN, STATE_UNAVAILABLE
+            )
         else:
             round_to = config.get(CONF_ROUND_TO, None)
             additional_template = config.get(CONF_VALUE_TEMPLATE, "")
 
             state_template = (
-                "{{% if states('{0}') != '{2}' " "and states('{0}') != '{5}' %}}"
+                "{{% if states('{0}') != '{2}' "
+                "and states('{0}') != '{5}' %}}"
             )
 
             if round_to is None:
                 state_template += "{{{{ state_attr('{0}', '{1}') {4} }}}}"
             elif round_to > 0:
                 state_template += (
-                    "{{{{ (state_attr('{0}', '{1}') | float)" " | round({3}) {4} }}}}"
+                    "{{{{ (state_attr('{0}', '{1}') | float)"
+                    " | round({3}) {4} }}}}"
                 )
             else:
-                state_template += "{{{{ state_attr('{0}', '{1}')" " | int {4} }}}}"
+                state_template += (
+                    "{{{{ state_attr('{0}', '{1}')" " | int {4} }}}}"
+                )
 
             state_template += "{{% else %}} {2} {{% endif %}}"
             state_template = state_template.format(
@@ -229,7 +239,9 @@ class AttributeSensor(RestoreEntity):
             ENTITY_ID_FORMAT, device_id, hass=hass
         )
         self._name = (
-            friendly_name if friendly_name is not None else device_friendly_name
+            friendly_name
+            if friendly_name is not None
+            else device_friendly_name
         )
         self._friendly_name = friendly_name
         self._unique_id = slugify(f"{entity_id}_{device_id}")
@@ -309,7 +321,9 @@ class AttributeSensor(RestoreEntity):
             self._state = self._template.async_render()
         except TemplateError as ex:
             if ex.args and (
-                ex.args[0].startswith("UndefinedError: 'None' has no attribute")
+                ex.args[0].startswith(
+                    "UndefinedError: 'None' has no attribute"
+                )
                 or ex.args[0].startswith(
                     "UndefinedError: 'mappingproxy object' has " "no attribute"
                 )
@@ -322,23 +336,31 @@ class AttributeSensor(RestoreEntity):
                 )
                 return
             self._state = None
-            _LOGGER.error("Could not attribute sensor for %s: %s", self._entity, ex)
+            _LOGGER.error(
+                "Could not attribute sensor for %s: %s", self._entity, ex
+            )
 
         if self._icon_template is not None:
             try:
                 self._icon = self._icon_template.async_render()
             except TemplateError as ex:
                 if ex.args and (
-                    ex.args[0].startswith("UndefinedError: 'None' has no attribute")
+                    ex.args[0].startswith(
+                        "UndefinedError: 'None' has no attribute"
+                    )
                     or ex.args[0].startswith(
-                        "UndefinedError: 'mappingproxy object' has " "no attribute"
+                        "UndefinedError: 'mappingproxy object' has "
+                        "no attribute"
                     )
                 ):
                     # Common during HA startup - so just a warning
                     _LOGGER.warning(
-                        "Could not render icon template %s," " the state is unknown.",
+                        "Could not render icon template %s,"
+                        " the state is unknown.",
                         self._name,
                     )
                     return
                 self._icon = super().icon
-                _LOGGER.error("Could not render icon template %s: %s", self._name, ex)
+                _LOGGER.error(
+                    "Could not render icon template %s: %s", self._name, ex
+                )
