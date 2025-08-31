@@ -28,13 +28,13 @@ from homeassistant.const import (
 from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import async_generate_entity_id
-from homeassistant.helpers.event import async_track_state_change
+from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = '1.3.0'
+__version__ = '1.3.2'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 async def async_setup_platform(
     hass,
     config,
-    async_add_devices,
+    async_add_entities,
     discovery_info=None
 ):
     """Set up the attributes sensors."""
@@ -160,7 +160,7 @@ async def async_setup_platform(
                 {{% elif batt > 35 %}}\
                 mdi:battery-40\
                 {{% elif batt > 25 %}}\
-                mdi:battery-30\
+                mdi:battery-60\
                 {{% elif batt > 15 %}}\
                 mdi:battery-20\
                 {{% elif batt > 10 %}}\
@@ -194,7 +194,7 @@ async def async_setup_platform(
         _LOGGER.error("No sensors added")
         return False
 
-    async_add_devices(sensors)
+    async_add_entities(sensors)
     return True
 
 
@@ -228,17 +228,17 @@ class AttributeSensor(RestoreEntity):
             self._state = state.state
 
         @callback
-        def template_sensor_state_listener(entity, old_state, new_state):
+        def template_sensor_state_listener(event):
             """Handle device state changes."""
-            self.hass.async_add_job(self.async_update_ha_state(True))
+            self.hass.async_create_task(self.async_write_ha_state())
 
         @callback
         def template_sensor_startup(event):
             """Update on startup."""
-            async_track_state_change(
+            async_track_state_change_event(
                 self.hass, self._entity, template_sensor_state_listener)
 
-            self.hass.async_add_job(self.async_update_ha_state(True))
+            self.hass.async_create_task(self.async_write_ha_state())
 
         self.hass.bus.async_listen_once(
             EVENT_HOMEASSISTANT_START, template_sensor_startup)
@@ -264,14 +264,14 @@ class AttributeSensor(RestoreEntity):
         return self._icon
 
     @property
-    def unit_of_measurement(self):
-        """Return the unit_of_measurement of the device."""
+    def native_unit_of_measurement(self):
+        """Return the native unit of measurement of the device."""
         return self._unit_of_measurement
 
     @property
-    def should_poll(self):
-        """No polling needed."""
-        return False
+    def available(self):
+        """Return True if entity is available."""
+        return self._state is not None
 
     async def async_update(self):
         """Update the state from the template and the friendly name."""
@@ -306,9 +306,9 @@ class AttributeSensor(RestoreEntity):
                 if ex.args and (
                         ex.args[0].startswith(
                             "UndefinedError: 'None' has no attribute") or
-                        ex.args[0].startswith(
-                            "UndefinedError: 'mappingproxy object' has "
-                            "no attribute")):
+                    ex.args[0].startswith(
+                        "UndefinedError: 'mappingproxy object' has "
+                        "no attribute")):
                     # Common during HA startup - so just a warning
                     _LOGGER.warning('Could not render icon template %s,'
                                     ' the state is unknown.', self._name)
