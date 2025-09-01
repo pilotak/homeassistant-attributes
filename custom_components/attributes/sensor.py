@@ -178,7 +178,7 @@ async def async_setup_platform(
                 {{% elif batt > 35 %}}\
                 mdi:battery-40\
                 {{% elif batt > 25 %}}\
-                mdi:battery-60\
+                mdi:battery-30\
                 {{% elif batt > 15 %}}\
                 mdi:battery-20\
                 {{% elif batt > 10 %}}\
