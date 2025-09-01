@@ -104,8 +104,7 @@ async def async_setup_platform(
         _LOGGER.info("Adding attribute: %s of entity: %s", attr, device)
         _LOGGER.debug("Applying template: %s", state_template)
 
-        state_template = template_helper.Template(state_template)
-        state_template.hass = hass
+        state_template = template_helper.Template(state_template, hass)
 
         icon = str(config.get(ATTR_ICON))
 
@@ -173,8 +172,7 @@ async def async_setup_platform(
             mdi:battery-unknown\
             {{% endif %}}").format(
                 device, attr, STATE_UNKNOWN, STATE_UNAVAILABLE)
-            new_icon = template_helper.Template(str(new_icon))
-            new_icon.hass = hass
+            new_icon = template_helper.Template(str(new_icon), hass)
         else:
             _LOGGER.debug("No icon applied")
             new_icon = None
