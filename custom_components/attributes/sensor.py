@@ -34,7 +34,7 @@ from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -299,7 +299,7 @@ class AttributeSensor(RestoreEntity):
         return self._icon
 
     @property
-    def native_unit_of_measurement(self):
+    def unit_of_measurement(self):
         """Return the native unit of measurement of the device."""
         return self._unit_of_measurement
 
