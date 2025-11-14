@@ -35,7 +35,7 @@ from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = "1.3.1"
+__version__ = "1.4.0"
 
 _LOGGER = logging.getLogger(__name__)
 
