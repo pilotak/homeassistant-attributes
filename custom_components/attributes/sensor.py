@@ -16,6 +16,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME,
+    CONF_UNIQUE_ID,
     CONF_UNIT_OF_MEASUREMENT,
     ATTR_ICON,
     CONF_ENTITIES,
@@ -52,6 +53,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_ROUND_TO): cv.positive_int,
         vol.Optional(CONF_VALUE_TEMPLATE): cv.string,
         vol.Optional(CONF_STATE_CLASS): STATE_CLASSES_SCHEMA,
+        vol.Optional(CONF_UNIQUE_ID): cv.string,
         vol.Required(CONF_ATTRIBUTE): cv.string,
         vol.Required(CONF_ENTITIES): cv.entity_ids,
     }
@@ -195,6 +197,13 @@ async def async_setup_platform(
             _LOGGER.debug("No icon applied")
             new_icon = None
 
+        unique_id = config.get(CONF_UNIQUE_ID, None)
+        if unique_id:
+            # If unique_id is provided, use it with entity suffix to ensure
+            # uniqueness
+            unique_id = slugify(
+                f"{unique_id}_{device.split('.', 1)[1]}_{attr}")
+
         sensors.append(
             AttributeSensor(
                 hass,
@@ -207,6 +216,7 @@ async def async_setup_platform(
                 state_template,
                 new_icon,
                 device,
+                unique_id,
             )
         )
     if not sensors:
@@ -232,6 +242,7 @@ class AttributeSensor(RestoreEntity):
         state_template,
         icon_template,
         entity_id,
+        unique_id=None,
     ):
         """Initialize the sensor."""
         self.hass = hass
@@ -244,7 +255,8 @@ class AttributeSensor(RestoreEntity):
             else device_friendly_name
         )
         self._friendly_name = friendly_name
-        self._unique_id = slugify(f"{entity_id}_{device_id}")
+        self._unique_id = unique_id if unique_id else slugify(
+            f"{entity_id}_{device_id}")
         self._attr_device_class = device_class
         self._attr_state_class = state_class
         self._unit_of_measurement = unit_of_measurement
