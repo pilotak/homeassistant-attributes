@@ -34,7 +34,7 @@ from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -297,6 +297,11 @@ class AttributeSensor(RestoreEntity):
     def icon(self):
         """Return the icon to use in the frontend, if any."""
         return self._icon
+
+    @property
+    def state_class(self):
+        """Return the state class of the sensor."""
+        return self._attr_state_class
 
     @property
     def unit_of_measurement(self):
