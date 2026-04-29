@@ -13,6 +13,7 @@ from homeassistant.components.sensor import (
     DEVICE_CLASSES_SCHEMA,
     STATE_CLASSES_SCHEMA,
     CONF_STATE_CLASS,
+    RestoreSensor,
 )
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME,
@@ -29,12 +30,11 @@ from homeassistant.exceptions import TemplateError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import async_generate_entity_id
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import template as template_helper
 from homeassistant.util import slugify
 
 
-__version__ = "1.3.2"
+__version__ = "1.3.3"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -217,7 +217,7 @@ async def async_setup_platform(
     return True
 
 
-class AttributeSensor(RestoreEntity):
+class AttributeSensor(RestoreSensor):
     """Representation of a Attribute Sensor."""
 
     def __init__(
@@ -234,6 +234,7 @@ class AttributeSensor(RestoreEntity):
         entity_id,
     ):
         """Initialize the sensor."""
+        super().__init__()
         self.hass = hass
         self.entity_id = async_generate_entity_id(
             ENTITY_ID_FORMAT, device_id, hass=hass
@@ -247,7 +248,7 @@ class AttributeSensor(RestoreEntity):
         self._unique_id = slugify(f"{entity_id}_{device_id}")
         self._attr_device_class = device_class
         self._attr_state_class = state_class
-        self._unit_of_measurement = unit_of_measurement
+        self._attr_native_unit_of_measurement = unit_of_measurement
         self._template = state_template
         self._state = None
         self._icon_template = icon_template
@@ -256,6 +257,7 @@ class AttributeSensor(RestoreEntity):
 
     async def async_added_to_hass(self):
         """Register callbacks."""
+        await super().async_added_to_hass()
         state = await self.async_get_last_state()
         if state:
             self._state = state.state
@@ -289,7 +291,7 @@ class AttributeSensor(RestoreEntity):
         return self._unique_id
 
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
         return self._state
 
@@ -297,16 +299,6 @@ class AttributeSensor(RestoreEntity):
     def icon(self):
         """Return the icon to use in the frontend, if any."""
         return self._icon
-
-    @property
-    def state_class(self):
-        """Return the state class of the sensor."""
-        return self._attr_state_class
-
-    @property
-    def unit_of_measurement(self):
-        """Return the native unit of measurement of the device."""
-        return self._unit_of_measurement
 
     @property
     def available(self):
