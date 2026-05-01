@@ -249,6 +249,7 @@ class AttributeSensor(RestoreSensor):
         self._attr_device_class = device_class
         self._attr_state_class = state_class
         self._attr_native_unit_of_measurement = unit_of_measurement
+        self._attr_suggested_unit_of_measurement = unit_of_measurement
         self._template = state_template
         self._state = None
         self._icon_template = icon_template
