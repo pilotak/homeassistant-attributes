@@ -149,8 +149,7 @@ async def async_setup_platform(
                 "mdi:eye {{% endif %}}"
             ).format(device, icon, STATE_UNKNOWN, STATE_UNAVAILABLE)
 
-            new_icon = template_helper.Template(new_icon)
-            new_icon.hass = hass
+            new_icon = template_helper.Template(new_icon, hass)
         elif (
             (device_class is None or device_class != "battery")
             and attr == "battery"
