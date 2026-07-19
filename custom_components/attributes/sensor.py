@@ -75,7 +75,8 @@ async def async_setup_platform(
 
             state_template = (
                 "{{% if states('{0}') != '{3}' "
-                "and states('{0}') != '{4}' %}}"
+                "and states('{0}') != '{4}' "
+                "and state_attr('{0}', '{1}') is not none %}}"
                 "{{{{ as_timestamp(state_attr('{0}', '{1}'))"
                 "| int | timestamp_local()"
                 "| timestamp_custom('{2}') }}}}"
@@ -89,7 +90,8 @@ async def async_setup_platform(
 
             state_template = (
                 "{{% if states('{0}') != '{2}' "
-                "and states('{0}') != '{5}' %}}"
+                "and states('{0}') != '{5}' "
+                "and state_attr('{0}', '{1}') is not none %}}"
             )
 
             if round_to is None:
