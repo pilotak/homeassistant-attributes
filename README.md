@@ -33,6 +33,7 @@ Configuration variables:
 - **entities** (*Required*): A list of entity IDs that you want to read attributes from.
 - **attribute** (*Required*): Which attribute to extract from defined entity IDs.
 - **friendly_name** (*Optional*): Name to use in the Frontend *(will be the same for all entities specified)*.
+- **unique_id** (*Optional*): Custom unique ID prefix for the sensors. If provided, the unique ID will be formatted as `{unique_id}_{entity_name}_{attribute}`. If not specified, an auto-generated unique ID will be used.
 - **icon** (*Optional*): Icon to use in the Frontend.
 - **device_class** (*Optional*): Defines the device_class, if not specified it will be the same as parent.
 - **unit_of_measurement** (*Optional*): Defines the units of measurement of the sensor, if any.
